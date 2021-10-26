@@ -1,2 +1,2 @@
-g++ -Wall src/* -o a.out
+g++ -Iinclude -Wall src/* -o a.out
 ./a.out
