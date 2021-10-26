@@ -14,7 +14,7 @@ double dot_product(vector const& a, vector const& b) {
     return std::inner_product(std::begin(a), std::end(a), std::begin(b), 0);
 }
 
-vector operator*(vector const& vec, double scalar) {
+vector operator*(vector const& vec, double const scalar) {
     vector result {};
     std::transform(std::begin(vec), std::end(vec), std::begin(result), [scalar](auto component){return component * scalar;});
     return result;
