@@ -7,11 +7,8 @@
 
 /*
     TODO: Clean up everything
-        Move vector-based computations to vector.hpp
-        Refactor apply_force()
         See if you can debug correct orbit
 */
-
 
 struct Body {    
     double mass;
@@ -20,46 +17,22 @@ struct Body {
     vector acceleration;
 };
 
-vector compute_direction(vector const& origin_pos, vector const& other_pos) {
-    vector result {};
-    for(unsigned int i = 0; i < DIMENSIONS; ++i) {
-        result[i] = other_pos[i] - origin_pos[i];
-    }
-    double magnitude = std::sqrt(compute_magnitude_squared(result));
-    std::transform(std::begin(result), std::end(result), std::begin(result), [magnitude](auto component){return component / magnitude;});
-    return result;
-}
-
 vector compute_direction(Body const& origin, Body const& other) {
     return compute_direction(origin.position, other.position);
-}
-
-vector compute_force(vector const& origin_pos, vector const& other_pos, double origin_mass, double other_mass) {
-    auto direction = compute_direction(origin_pos, other_pos);
-    double magnitude = GRAVITATIONAL_CONSTANT * ((origin_mass * other_mass) / (compute_magnitude_squared(direction)));
-    return direction * magnitude;
 }
 
 vector compute_force(Body const& origin, Body const& other) {
     return compute_force(origin.position, other.position, origin.mass, other.mass);
 }
 
-vector compute_acceleration(vector const& origin_pos, vector const& other_pos, double origin_mass, double other_mass) {
-    vector result {};
-    vector force = compute_force(origin_pos, other_pos, origin_mass, other_mass);
-    std::transform(std::begin(force), std::end(force), std::begin(result), [other_mass](auto component){return component / other_mass;});
-    return result;
+void apply_force(vector const& force, double mass, vector & accel, vector & velocity, vector & position) {
+    accel = compute_acceleration(force, mass);
+    physics_integration(velocity, accel);
+    physics_integration(position, velocity);
 }
 
-void apply_force(Body &b, vector const& force) {
-    std::transform(std::begin(force), std::end(force), std::begin(b.acceleration), [&b](auto coord){return coord / b.mass;});
-    for(unsigned int i = 0; i < b.velocity.size(); ++i) {
-        b.velocity[i] += DT * b.acceleration[i];
-    }
-
-    for(unsigned int i = 0; i < b.position.size(); ++i) {
-        b.position[i] += DT * b.velocity[i];
-    }
+void apply_force(vector const& force, Body &b) {
+    apply_force(force, b.mass, b.acceleration, b.velocity, b.position);
 }
 
 int main() {
@@ -75,7 +48,7 @@ int main() {
         vector gravitational_force = compute_force(sun, earth);
         std::cout << "Force: ";
         print_vector(gravitational_force);
-        apply_force(earth, gravitational_force);
+        apply_force(gravitational_force, earth);
         std::cout << "Earth Pos: ";
         print_vector(earth.position); 
         std::cout << "Earth Velocity: ";
