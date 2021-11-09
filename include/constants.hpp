@@ -6,5 +6,5 @@ static double constexpr GRAVITATIONAL_CONSTANT = 6.67408e-20;   // KM^3 / KG*S^2
 static double constexpr PERIAPSIS = 1.47e8;
 static double constexpr V_PERIAPSIS = 30.29;
 
-// POSITION, VELOCITY, ACCELERATION = KMS
+// POSITION, VELOCITY, ACCELERATION = KM/S
 // MASS IN KG
