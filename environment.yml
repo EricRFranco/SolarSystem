@@ -1,0 +1,8 @@
+---
+name: solar_system
+channels:
+  - conda-forge
+dependencies:
+  - cmake>=3.21
+  - ninja
+  - sdl2
